@@ -457,15 +457,18 @@ jobs:
           #                        independent encoder (tests/apollo/fixtures.txt)
           #   ApolloClientTest   - Apollo core + modules end to end through
           #                        PluginChannels (handshake, routing, overrides)
+          #   ClientModsTest     - client mods: HUD layouts, saved layout, and
+          #                        server mod_setting/server_rule force-disables
           javac -d /tmp/gt-classes \
             tests/geometry/*.java \
             tests/apollo/*.java \
-            $(find sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/apollo -name '*.java') \
+            $(find sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/apollo \
+                   sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/mods -name '*.java') \
             sources/teavm/java/net/minecraft/client/renderer/FaceTables.java \
             sources/teavm/java/net/minecraft/world/item/crafting/CraftingRecipes.java \
             sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/network/PluginChannels.java \
             gateway/PlaceholderServer/src/main/java/net/lax1dude/eaglercraft/v2_6/placeholder_server/mc/*.java
-          for t in FaceTablesTest RegistryParityTest PhysicsParityTest RecipeParityTest ProtocolFuzzTest BridgeRelayTest PluginChannelsTest ApolloProtoTest ApolloClientTest; do
+          for t in FaceTablesTest RegistryParityTest PhysicsParityTest RecipeParityTest ProtocolFuzzTest BridgeRelayTest PluginChannelsTest ApolloProtoTest ApolloClientTest ClientModsTest; do
             echo "── $t"
             java -cp /tmp/gt-classes "$t"
           done
