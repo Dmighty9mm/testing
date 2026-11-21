@@ -46,6 +46,7 @@ public final class WorldGlRenderer {
         private static JSObject uMvp = null;
         private static JSObject uTex = null;
         private static JSObject uSkyLight = null;
+        private static JSObject uMinLight = null;
         private static JSObject vao = null;
 
         /**
@@ -59,6 +60,8 @@ public final class WorldGlRenderer {
         private static float skyLightR = 1.0f;
         private static float skyLightG = 1.0f;
         private static float skyLightB = 1.0f;
+        /** Light floor 0..1 (fullbright / a server brightness rule); 0 = vanilla. */
+        private static float minLight = 0.0f;
 
         /** Interleaved: 3 floats pos, 2 floats uv, 1 float layer, 4 bytes color = 28 bytes. */
         public static final int VERTEX_BYTES = 28;
@@ -93,6 +96,7 @@ public final class WorldGlRenderer {
                 + "precision highp sampler2DArray;"
                 + "uniform sampler2DArray u_tex;"
                 + "uniform vec3 u_skyLight;"
+                + "uniform float u_minLight;"
                 + "in vec2 v_uv;"
                 + "in float v_layer;"
                 + "in vec4 v_color;"
@@ -100,7 +104,7 @@ public final class WorldGlRenderer {
                 + "void main() {"
                 + "  vec4 c = texture(u_tex, vec3(v_uv, v_layer));"
                 + "  if (c.a < 0.5) discard;"
-                + "  frag = vec4(c.rgb * v_color.rgb * u_skyLight, c.a * v_color.a);"
+                + "  frag = vec4(c.rgb * max(v_color.rgb * u_skyLight, vec3(u_minLight)), c.a * v_color.a);"
                 + "}";
 
         /** Compiles the world program once. Returns false while unavailable. */
@@ -134,6 +138,7 @@ public final class WorldGlRenderer {
                         uMvp = PlatformOpenGL._wglGetUniformLocation(program, "u_mvp");
                         uTex = PlatformOpenGL._wglGetUniformLocation(program, "u_tex");
                         uSkyLight = PlatformOpenGL._wglGetUniformLocation(program, "u_skyLight");
+                        uMinLight = PlatformOpenGL._wglGetUniformLocation(program, "u_minLight");
                         vao = PlatformOpenGL._wglCreateVertexArray();
                         PlatformOpenGL._wglBindVertexArray(vao);
                         PlatformOpenGL._wglEnableVertexAttribArray(0);
@@ -283,6 +288,15 @@ public final class WorldGlRenderer {
                 skyLightB = b;
         }
 
+        /**
+         * Light floor for the world shader (client fullbright mod or a
+         * server brightness rule): each lit color channel is raised to at
+         * least {@code level}. 0 leaves the vanilla lighting untouched.
+         */
+        public static void setMinLight(float level) {
+                minLight = Math.max(0.0f, Math.min(1.0f, level));
+        }
+
         /** Binds the world program + VAO and uploads the MVP uniform. */
         public static void bindState(WebGL2RenderingContext gl) {
                 if (!programReady) return;
@@ -292,6 +306,7 @@ public final class WorldGlRenderer {
                 PlatformOpenGL._wglUniformMatrix4fv(uMvp, false, mvpBuf);
                 PlatformOpenGL._wglUniform1i(uTex, 0);
                 PlatformOpenGL._wglUniform3f(uSkyLight, skyLightR, skyLightG, skyLightB);
+                PlatformOpenGL._wglUniform1f(uMinLight, minLight);
                 PlatformOpenGL._wglActiveTexture(WebGL2RenderingContext.TEXTURE0);
         }
         /**

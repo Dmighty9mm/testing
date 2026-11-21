@@ -89,7 +89,8 @@ public class KeyboardInput {
                         up, down, left, right,
                         KeyMapping.JUMP.isDown(),
                         KeyMapping.SNEAK.isDown(),
-                        KeyMapping.SPRINT.isDown());
+                        KeyMapping.SPRINT.isDown()
+                                        || net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient.sprintHeld());
                 float forwardImpulse = calculateImpulse(this.keyPresses.forward, this.keyPresses.backward);
                 float leftImpulse = calculateImpulse(this.keyPresses.left, this.keyPresses.right);
                 // Vanilla: Vec2(leftImpulse, forwardImpulse).normalized()

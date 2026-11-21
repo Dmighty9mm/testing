@@ -52,6 +52,11 @@ public class KeyboardHandler {
                         }
                 }
 
+                // client mods: Right Shift opens the mod menu; sprint key toggles sprint
+                if (net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient.onKeyDown(key)) {
+                        return;
+                }
+
                 // Vanilla Minecraft.pauseGame: ESC while in a world with no
                 // screen open opens the pause menu (the in-world game menu).
                 if (key == 1 && minecraft.screen == null && minecraft.isLevelLoaded()) {

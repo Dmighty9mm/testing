@@ -68,6 +68,8 @@ public class Gui {
 
                 renderCrosshair(guiWidth, guiHeight);
                 renderHotbar(guiWidth, guiHeight);
+                // client mods HUD + Apollo server overlays
+                net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient.renderHud(guiWidth, guiHeight, partialTick);
         }
 
         /**

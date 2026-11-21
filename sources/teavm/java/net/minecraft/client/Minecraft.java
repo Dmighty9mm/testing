@@ -148,6 +148,8 @@ public class Minecraft implements com.mojang.blaze3d.platform.WindowEventHandler
                         this.gameRenderer = new GameRenderer(this);
                         this.levelRenderer = new LevelRenderer(this);
                         this.gui = new Gui(this);
+                        // client mods + Apollo server API (channels, modules, saved HUD layout)
+                        net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient.init(this);
 
                         // Route raw DOM keyboard events into the key handler:
                         // printable keys become charTyped on the current screen

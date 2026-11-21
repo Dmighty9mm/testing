@@ -166,6 +166,10 @@ public class GameRenderer {
                                 net.minecraft.client.multiplayer.ClientLevel level = minecraft.getLevel() instanceof net.minecraft.client.multiplayer.ClientLevel l ? l : null;
                                 if (player != null && level != null) {
                                         float aspect = pxHeight > 0 ? (float) pxWidth / (float) pxHeight : 1.0f;
+                                        // client mods: zoom FOV + fullbright / server brightness rule
+                                        float worldFov = net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient
+                                                        .adjustFov(minecraft.getOptions().fov);
+                                        net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient.applyLighting();
                                         // Close the (still empty) GUI batch - the sky
                                         // pass switches programs and attribute
                                         // pointers, and the next GUI draw must
@@ -173,7 +177,7 @@ public class GameRenderer {
                                         // (the same contract the panorama honors)
                                         EaglerGuiImpl.flush(gl);
                                         SkyRenderer.renderFrame(gl, pxWidth, pxHeight,
-                                                        minecraft.getOptions().fov, aspect,
+                                                        worldFov, aspect,
                                                         player.yRot, player.xRot);
                                         WorldGlRenderer.setSkyLight(
                                                         (SkyRenderer.skyLightRgb() >> 16 & 0xFF) / 255.0f,
@@ -201,7 +205,7 @@ public class GameRenderer {
                                                 pxWidth, pxHeight,
                                                 eyeX, eyeY, eyeZ,
                                                 player.yRot, player.xRot,
-                                                minecraft.getOptions().fov);
+                                                worldFov);
 
                                         // Vanilla renderHitOutline + destroy stage
                                         // (hidden with the HUD by the dev

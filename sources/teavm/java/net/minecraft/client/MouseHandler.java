@@ -82,6 +82,8 @@ public class MouseHandler {
 
                 if (this.mouseGrabbed && minecraft.screen == null && minecraft.isLevelLoaded()) {
                         if (action == 1) {
+                                // client mods: CPS counter (0 attack, 1 use)
+                                net.lax1dude.eaglercraft.v2_6.client.hud.PlebClient.onWorldClick(button);
                                 if (button == 0) {
                                         minecraft.startAttack();
                                 } else if (button == 1) {
