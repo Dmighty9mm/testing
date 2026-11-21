@@ -676,3 +676,176 @@ retry re-pins the camera and verifies the crosshair (face 'up', aim
 settled, target != feet cell) before a wide right-press, success is
 verified by the edits counter + stack consumption, and the placed
 cobblestone is located near the aimed cell.
+
+---
+Task ID: 15
+Agent: main (project thread "Add Apollo server API support")
+Task: plugin-message (custom payload) relay client <-> gateway <-> backend,
+the transport prerequisite for Lunar Client Apollo server-API support
+
+Context / findings (Step 0 investigation, reported to the owner):
+- This repo is NOT a fork of lax1dude's EaglercraftX 1.8/1.12: it is a
+  from-scratch MC 26.1.2 (protocol 775) client, TeaVM 0.15 -> JS/WebGL2,
+  ~411 Java files. No desktop runtime / CompileJS step. Entities (mobs,
+  remote players) are not implemented.
+- Before this task plugin messages did NOT round-trip to any real server:
+  * client: only config-phase plugin messages were sent (brand), play-phase
+    custom payloads were "unhandled play packet", minecraft:register never sent;
+  * the browser client only speaks to gateway/PlaceholderServer (MC-775-shaped
+    pinned protocol, serves its own flat world, no backend at all);
+  * the Bungee/Velocity plugins speak a different tiny wire format
+    (0x01..0x05, 0xFF) the browser client does not speak; their McBridge
+    used pre-1.20.2 ids (keepalive 0x1E, system chat 0x72, chat 0x06...),
+    sent a uuid-present flag in Login Start, never sent Login Acknowledged
+    and had no configuration phase - it could not have logged into a real
+    26.1.2 Paper server.
+- Apollo facts gathered (github.com/LunarClient/Apollo, MIT, (c) 2026
+  Moonsworth): server detects the client via PlayerRegisterChannelEvent on
+  `lunar:apollo` (i.e. our minecraft:register), messages are
+  google.protobuf.Any bytes; client answers with
+  lunarclient.apollo.player.v1.PlayerHandshakeMessage; lightweight JSON
+  channel `apollo:json` with "@type". 38 module dirs in api/module (incl.
+  newer: autotexthotkey, inventory, marker, packetenrichment, paynow,
+  saturation, serverlink, tebex, totemcounter, heightlimit, cosmetic).
+  Apollo's MinecraftVersion enum has no 26.x -> we will report UNKNOWN
+  (server maps unknown to MinecraftVersion.UNKNOWN). The .proto files
+  (com.lunarclient:apollo-protos 0.2.7) live on buf.build and Lunar's
+  Maven repo, both blocked from the sandbox (403) - must be fetched via
+  the owner's machine/browser next session. Artemis (CrystallicDev/Artemis,
+  Forge 1.8 mod) has NO license file: reference only, copy nothing.
+- Owner decisions (decision cards in the thread): "Relay first, then
+  Apollo"; "Relay now, full Paper play later" (side-channel relay now, the
+  large packet-translation refactor to actually play on Paper's world is
+  planned afterwards, needs the owner's OK before starting).
+
+Work log, file by file:
+- gateway/PlaceholderServer/.../mc/McPacketIds.java: every default is now
+  the vanilla 26.1.2 id = index in the decompiled LoginProtocols /
+  ConfigurationProtocols / GameProtocols templates (ids are assigned in
+  registration order). Added login ack/cookie ids, the whole config set
+  (custom payload S01/C02, finish S03/C03, keepalive 04, ping/pong 05,
+  known packs S0E/C07, code of conduct S13/accept C09, cookie 00/01) and
+  play custom payload S18/C16, keepalive S2C/C1C, ping S3D/pong C2D,
+  system chat S79, disconnect S20, start configuration S76/ack C10, chat
+  C09, chat command C07, cookie 15/15. copy() covers all fields.
+- .../mc/McBridge.java: Login Start = name + UUID (no presence flag,
+  ServerboundHelloPacket); sends Login Acknowledged; new runConfiguration()
+  (keepalive/ping answered, known packs ECHOED so the server omits
+  registry NBT, code of conduct accepted, cookies refused, custom payloads
+  delivered, finish acked); play loop answers ping, delivers custom
+  payloads, handles Start Configuration (ack + re-walk config), refuses
+  cookies. New Phase enum + getPhase(), Listener.onPluginMessage (default
+  method, so Bungee/Velocity listeners compile unchanged),
+  sendPluginMessage() (queues up to 256 before CONFIGURATION, flushes in
+  order; id follows phase; 32767-byte serverbound cap), sendCommand()
+  (ServerboundChatCommandPacket). Chat's LastSeenMessages.Update is now
+  offset varint + 3-byte fixed bitset + checksum byte (was a bare 0 varint).
+  close() flips to CLOSED before closing the socket and fail() ignores
+  errors after a deliberate close (was logging "Socket closed" errors).
+  Phase flips (login ack, finish ack, config ack) happen under the send
+  lock so no wrong-phase custom payload can slip out. Unresolved targets
+  (host:port config) are resolved per connect.
+- .../mc/McProtocolStub.java: now a vanilla 26.1.2 backend: reads Login
+  Start, waits for Login Acknowledged, runs configuration (brand,
+  stub:config payload, known packs [minecraft:core:26.1.2], keepalive
+  0xC0FFEE, ping 42, finish ONLY after the known-packs answer like
+  Paper), play with ids 0x2C/0x79, echoes every client plugin message on
+  the same channel, answers minecraft:register on stub:registered,
+  reports how config was answered on stub:status, runs commands (0x07)
+  as "ran command: /x" system chat, "!reconfig" chat triggers Start
+  Configuration. Writes are serialized with a lock (keepalive thread).
+- .../GatewaySession.java: backend side channel. startBackendBridge() at
+  login (if --backend); client config 0x01 and new play 0x10 plugin
+  messages -> bridge; backend payloads -> client play 0x14 (queued until
+  enterPlay, cap 256); chat mirrored to backend, "/cmd" -> backend command
+  only; backend system chat -> player; backend kick -> play disconnect;
+  bridge errors shown as red system chat; close() closes the bridge.
+  Without --backend, plugin messages are accepted and dropped (play 0x10
+  used to be "unexpected play packet" -> kick). Client payload >32767
+  bytes -> kick.
+- .../PlaceholderServer.java: `--backend host:port` (createUnresolved,
+  default port 25565), getBackend()/getBackendIds(), usage docs.
+- Bungee/Velocity plugins: default config.yml mc_* ids updated to the
+  26.1.2 values (44/121/32/28/9) + new mc_custom_payload_id (24) and
+  mc_custom_payload_response_id (22) overrides.
+- sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/network/
+  PluginChannels.java (NEW, pure java.util so it compiles under TeaVM and
+  runs in JVM tests): handler registry, minecraft:register encode/decode
+  (NUL-joined), Identifier validation, onJoin() announces all channels in
+  one register (late registrations announced immediately), dispatch()
+  never throws (handler exceptions logged), unknown channels ignored,
+  server register/unregister tracked, 32767/1 MiB caps, reset() on
+  disconnect with SessionListener hooks (for per-module cleanup), recent
+  traffic ring (64) + counters + debug flag for the future Apollo debug
+  screen.
+- net/minecraft/network/Connection.java: S2C_PLAY_PLUGIN_MESSAGE 0x14,
+  C2S_PLAY_PLUGIN_MESSAGE 0x10; sendPluginMessage() returns boolean and
+  picks config vs play id by whether the finish ack went out
+  (configAckSent) - NOT by this.state, which flips to PLAY on the finish
+  packet while the server is still in CONFIGURATION (the brand is sent in
+  that window and must stay 0x01). PluginChannels.reset() wherever the
+  connection is marked disconnected.
+- net/minecraft/client/multiplayer/ClientPacketListener.java: attach()
+  resets PluginChannels, wires its log to ClientMain and its sender to
+  Connection.sendPluginMessage; config + play plugin messages dispatched;
+  PluginChannels.onJoin() after doMultiplayerJoin.
+- tests/geometry/BridgeRelayTest.java (NEW, 28 checks): McBridge vs
+  McProtocolStub in-process over TCP with compression: early queue flush
+  order, config delivery, config answered (packs=1 pong=42 keepalive=1),
+  register/binary/20000-byte round trips, cap refusals, chat, Start
+  Configuration re-walk and relay after it, keepalives, closed refusal.
+- tests/geometry/PluginChannelsTest.java (NEW, 33 checks).
+- .github/workflows/ci.yml geometry-unit: compiles PluginChannels +
+  all mc/*.java and runs both new tests.
+- scripts/gw_relay_smoke.mjs (NEW, whitelisted in .gitignore): wire-level
+  browser-client emulation vs PlaceholderServer --backend + stub, 10 checks.
+- tests/e2e/plugin-relay.spec.ts (NEW): spawns stub + gateway from the
+  shadowJar and runs the smoke. NOTE: e2e.yml never builds the gateway
+  jars, so this spec (like gateway-protocol/multiplayer) skips in CI; the
+  JVM BridgeRelayTest is the CI guard.
+- docs/PROTOCOL.md: play plugin message rows (S 0x14, C 0x10), new
+  "Plugin messages and the backend side channel" section with all backend
+  ids. docs/IMPLEMENTATION-COVERAGE.md: rows for the side channel, full
+  Paper play (missing) and Apollo (missing, next); JVM layer now 7 tests.
+
+Verification actually performed (sandbox, Java 26, Node 22):
+- All 7 JVM tests green (FaceTables, RegistryParity 159 blocks, Physics 7,
+  Recipe 25, ProtocolFuzz 8209+4105, BridgeRelay 28/28 x4 runs,
+  PluginChannels 33/33).
+- gw_relay_smoke.mjs vs PlaceholderServer --backend + McProtocolStub:
+  10 passed, 0 failed, 4 consecutive runs; gateway log had 0 errors.
+- gw_real_smoke.mjs vs PlaceholderServer WITHOUT --backend: 42 passed,
+  0 failed (no regression). WITH --backend it shows 8 failures - expected:
+  that script reads packets in strict order and the relayed backend
+  traffic (0x14 payloads, backend chat) interleaves; the e2e spec runs it
+  without --backend.
+- Bungee path (GatewaySmokeMain + updated bridge + new stub) checked with
+  a node WS client: login result OK, chat "echoed: hello relay" came back
+  (= multiplayer.spec flow).
+- Client: Connection, ClientPacketListener, PluginChannels compile with
+  javac against teavm-jso/interop/jso-apis/platform 0.15.0 + gson/guava
+  (one unrelated pre-existing authlib Property class stubbed). The full
+  TeaVM build could NOT run in the sandbox (Maven Central 429 + aliyun
+  403; minecraft jar not present) - CI must confirm.
+- EaglercraftXBungee compiled with javac against bungeecord-api
+  1.20-R0.2; Velocity module not compiled locally (velocity-api snapshot
+  unavailable) - its change is two config lines + two intOf lines.
+- NOT tested: a real Paper server (none in the sandbox).
+
+Branch/PR: work is on branch claude/project-thread-kgpjy6 (session
+branch rule), PR to main. CI (ci.yml) only triggers on push to main, so
+the PR itself shows no CI run; the definition-of-done CI + live-site
+verification happens after merge.
+
+Open / next session:
+1. Fetch apollo-protos .proto files (buf.build/lunarclient/apollo or
+   com.lunarclient:apollo-protos sources jar) via the owner's machine.
+2. Build client/apollo/*: hand-written protobuf wire reader/writer
+   (varint, zigzag, fixed32/64, length-delimited, unknown-field skip),
+   google.protobuf.Any unpack, JSON @type decoder, message router,
+   handshake (PlayerHandshakeMessage, MinecraftVersion -> UNKNOWN, no Lunar
+   brand), per-module state with PluginChannels.SessionListener reset.
+3. Tier 1 modules that need no entities first; entity-based modules wait
+   for an entity system.
+4. Plan (owner approval required) the full-Paper-play refactor: gateway
+   translating real 26.1.2 play packets, or client speaking vanilla play.

@@ -2,6 +2,7 @@ package net.minecraft.network;
 
 import java.util.ArrayDeque;
 
+import net.lax1dude.eaglercraft.v2_6.client.network.PluginChannels;
 import net.lax1dude.eaglercraft.v2_6.internal.PlatformNetworking;
 import net.lax1dude.eaglercraft.v2_6.internal.PlatformRuntime;
 import net.lax1dude.eaglercraft.v2_6.internal.teavm.ClientMain;
@@ -79,9 +80,13 @@ public class Connection {
         public static final int S2C_PLAY_CHUNK = 0x2E;
         public static final int S2C_PLAY_PLAYER_POSITION = 0x38;
         public static final int S2C_PLAY_SYSTEM_CHAT = 0x4F;
+        /** Plugin Message / custom payload (S→C, PROTOCOL.md play table). */
+        public static final int S2C_PLAY_PLUGIN_MESSAGE = 0x14;
         public static final int C2S_PLAY_TELEPORT_CONFIRM = 0x00;
         public static final int C2S_PLAY_CHAT_MESSAGE = 0x07;
         public static final int C2S_PLAY_KEEP_ALIVE = 0x11;
+        /** Plugin Message / custom payload (C→S, PROTOCOL.md play table). */
+        public static final int C2S_PLAY_PLUGIN_MESSAGE = 0x10;
         public static final int C2S_PLAY_MOVE_POS = 0x13;
         public static final int C2S_PLAY_MOVE_POS_ROT = 0x14;
         public static final int C2S_PLAY_MOVE_ROT = 0x15;
@@ -113,6 +118,8 @@ public class Connection {
         private Listener listener;
         private boolean socketOwned;
         private boolean disconnected;
+        /** Set once the config finish ack went out: the server is in PLAY. */
+        private boolean configAckSent;
         private String disconnectReason;
 
         /** Frames received from the WS callback, drained on the game thread. */
@@ -221,6 +228,7 @@ public class Connection {
                 PacketBuffer buf = new PacketBuffer(4);
                 buf.writeVarInt(C2S_CONFIG_ACK_FINISH);
                 this.sendRaw(buf);
+                this.configAckSent = true;
         }
 
         /** Client brand plugin message (minecraft:brand, after config). */
@@ -230,13 +238,29 @@ public class Connection {
                 this.sendPluginMessage("minecraft:brand", data.toArray());
         }
 
-        /** Configuration Plugin Message (C→S 0x01). */
-        public void sendPluginMessage(String channel, byte[] data) {
+        /**
+         * Plugin Message: C→S 0x01 while the server is in CONFIGURATION,
+         * 0x10 once it is in PLAY. Returns false (nothing sent) before
+         * configuration or once disconnected.
+         */
+        public boolean sendPluginMessage(String channel, byte[] data) {
+                // The server stays in CONFIGURATION until our finish ack,
+                // even though this.state flips to PLAY when the finish
+                // arrives - the ack, not the state, picks the packet id.
+                int id;
+                if (this.state != STATE_CONFIGURATION && this.state != STATE_PLAY) {
+                        return false;
+                }
+                id = this.configAckSent ? C2S_PLAY_PLUGIN_MESSAGE : C2S_CONFIG_PLUGIN_MESSAGE;
+                if (this.disconnected) {
+                        return false;
+                }
                 PacketBuffer buf = new PacketBuffer(16 + data.length);
-                buf.writeVarInt(C2S_CONFIG_PLUGIN_MESSAGE);
+                buf.writeVarInt(id);
                 buf.writeUtf(channel);
                 buf.writeBytes(data);
                 this.sendRaw(buf);
+                return true;
         }
 
         // ========== Play state (C→S) ==========
@@ -546,6 +570,7 @@ public class Connection {
                         return;
                 }
                 this.disconnected = true;
+                PluginChannels.reset();
                 this.disconnectReason = reason != null ? reason : "disconnect.endOfStream";
                 if (this.socketOwned) {
                         PlatformNetworking.setMessageListener(null);
@@ -564,11 +589,13 @@ public class Connection {
                         int transport = PlatformNetworking.getConnectionState();
                         if (transport == PlatformNetworking.CONN_FAILED) {
                                 this.disconnected = true;
+                                PluginChannels.reset();
                                 this.disconnectReason =
                                                 "Connection failed: the server did not respond";
                         } else if (this.socketOwned
                                         && transport == PlatformNetworking.CONN_CLOSED) {
                                 this.disconnected = true;
+                                PluginChannels.reset();
                                 if (this.disconnectReason == null) {
                                         this.disconnectReason =
                                                         "Connection lost: the server closed the connection";

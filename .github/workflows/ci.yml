@@ -450,12 +450,16 @@ jobs:
           #   PhysicsParityTest  - movement constants vs the decompile zip
           #   RecipeParityTest   - generated recipe table vs the registry
           #   ProtocolFuzzTest   - seeded wire-codec fuzz + differential
+          #   BridgeRelayTest    - backend bridge vs McProtocolStub over TCP:
+          #                        26.1.2 login/config/play + plugin-message relay
+          #   PluginChannelsTest - client plugin-channel layer (register, dispatch, limits)
           javac -d /tmp/gt-classes \
             tests/geometry/*.java \
             sources/teavm/java/net/minecraft/client/renderer/FaceTables.java \
             sources/teavm/java/net/minecraft/world/item/crafting/CraftingRecipes.java \
-            gateway/PlaceholderServer/src/main/java/net/lax1dude/eaglercraft/v2_6/placeholder_server/mc/McVarInt.java
-          for t in FaceTablesTest RegistryParityTest PhysicsParityTest RecipeParityTest ProtocolFuzzTest; do
+            sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/network/PluginChannels.java \
+            gateway/PlaceholderServer/src/main/java/net/lax1dude/eaglercraft/v2_6/placeholder_server/mc/*.java
+          for t in FaceTablesTest RegistryParityTest PhysicsParityTest RecipeParityTest ProtocolFuzzTest BridgeRelayTest PluginChannelsTest; do
             echo "── $t"
             java -cp /tmp/gt-classes "$t"
           done

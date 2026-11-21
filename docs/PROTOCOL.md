@@ -711,6 +711,7 @@ offline-mode UUID (`nameUUIDFromBytes("OfflinePlayer:<name>")`).
 | Player Position (0x38) | Double x/y/z, Float yaw/pitch, Byte flags (bit0 +x, bit1 +y, bit2 +z, bit3 +yaw, bit4 +pitch relative), VarInt teleport id. Client confirms with Teleport Confirm (C→S 0x00, VarInt id) |
 | Keep Alive (0x2C) | Long token; client echoes on C→S 0x11. Server sends every 15s, times out after 30s |
 | System Chat (0x4F) | String JSON chat component (gateway sends `{"text": ...}`) |
+| Plugin Message (0x14) | String channel + raw bytes to the end of the frame (max 1 MiB). Unknown channels are ignored by the client, never a disconnect |
 | Disconnect (0x1A) | String JSON chat component |
 
 ### Play - client → server
@@ -718,7 +719,8 @@ offline-mode UUID (`nameUUIDFromBytes("OfflinePlayer:<name>")`).
 | Packet | Fields |
 |--------|--------|
 | Teleport Confirm (0x00) | VarInt teleport id |
-| Chat Message (0x07) | String (max 256 chars) |
+| Chat Message (0x07) | String (max 256 chars). With a backend, a leading `/` makes it a backend command |
+| Plugin Message (0x10) | String channel + raw bytes to the end of the frame (max 32767 bytes, the vanilla serverbound cap; larger closes the connection) |
 | Keep Alive (0x11) | Long token (echo) |
 | Move Player Pos (0x13) | Double x/y/z, Boolean on ground |
 | Move Player Pos Rot (0x14) | Double x/y/z, Float yaw/pitch, Boolean on ground |
@@ -732,6 +734,37 @@ offline-mode UUID (`nameUUIDFromBytes("OfflinePlayer:<name>")`).
 Block faces use the vanilla 3D ids: 0 down (-Y), 1 up (+Y), 2 north
 (-Z), 3 south (+Z), 4 west (-X), 5 east (+X). Use Item On targets the
 face's neighbor cube.
+
+### Plugin messages and the backend side channel
+
+Plugin messages (custom payloads) use the config ids (S 0x00 / C 0x01)
+until the client's Acknowledge Finish Configuration, then the play ids
+(S 0x14 / C 0x10). The client announces the channels it handles with one
+`minecraft:register` message (UTF-8 channel ids joined by NUL) right
+after Login (Play); the server may announce its own with
+`minecraft:register` / `minecraft:unregister`.
+
+`PlaceholderServer --backend host:port` turns on the side channel: at
+login the gateway also logs the player into that vanilla 26.1.2 server
+(offline mode) through `McBridge`, which walks the real login,
+configuration (known packs echoed, keepalive/ping answered, code of
+conduct accepted) and play phases and re-walks configuration on Start
+Configuration. Plugin messages are relayed both ways - client messages
+sent before the backend reaches CONFIGURATION are queued in order;
+backend messages are queued until the client is in PLAY and delivered
+as 0x14. Chat is mirrored to the backend, `/commands` go to the backend
+only, backend system chat is shown to the player. The world is still
+the gateway's own. Verified by `scripts/gw_relay_smoke.mjs`
+(`tests/e2e/plugin-relay.spec.ts`) and the JVM `BridgeRelayTest`.
+
+Backend (vanilla 26.1.2, from the decompiled protocol templates) ids
+the bridge uses: login hello 0x00 (String name, UUID), login ack 0x03;
+config: custom payload S 0x01 / C 0x02, finish S 0x03 / C 0x03,
+keepalive 0x04, ping/pong 0x05, known packs S 0x0E / C 0x07, code of
+conduct S 0x13 / accept C 0x09; play: custom payload S 0x18 / C 0x16,
+keepalive S 0x2C / C 0x1C, ping S 0x3D / pong C 0x2D, system chat S
+0x79, disconnect S 0x20, start configuration S 0x76 / ack C 0x10, chat
+C 0x09, chat command C 0x07. All live in `McPacketIds`.
 
 ### Movement rule
 
