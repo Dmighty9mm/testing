@@ -106,6 +106,7 @@ scripts/*
 !scripts/gen_block_palette.py
 !scripts/local_build.sh
 !scripts/gw_real_smoke.mjs
+!scripts/gw_relay_smoke.mjs
 !scripts/render_panorama.mjs
 dfu-classes
 sources/resources/assets/

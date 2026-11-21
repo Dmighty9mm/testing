@@ -19,6 +19,8 @@ import org.java_websocket.server.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.lax1dude.eaglercraft.v2_6.placeholder_server.mc.McPacketIds;
+
 /**
  * EaglerCraft 26.1.2 - the placeholder gateway server.
  *
@@ -38,7 +40,16 @@ import org.slf4j.LoggerFactory;
  * <pre>
  *   java -jar PlaceholderServer.jar [--port 8081] [--motd "..."] [--max-conn N]
  *                                   [--rate N] [--seed N] [--verbose]
+ *                                   [--backend host:port]
  * </pre>
+ *
+ * <p>{@code --backend} turns on the backend side channel: every player
+ * who logs in is also logged into that vanilla 26.1.2 server (offline
+ * mode, e.g. Paper with {@code online-mode=false}) through an
+ * {@link net.lax1dude.eaglercraft.v2_6.placeholder_server.mc.McBridge}.
+ * Plugin messages (custom payloads - the channel server APIs such as
+ * Apollo use) and chat/commands are relayed both ways; the world itself
+ * is still the gateway's own. See {@link GatewaySession}.</p>
  *
  * <p>Transport hygiene: text frames, empty frames, oversize frames
  * (1 MiB cap) and per-connection packet-rate violations close the
@@ -64,6 +75,9 @@ public class PlaceholderServer extends WebSocketServer {
         private final int packetsPerSecond;
         private final boolean verbose;
         private final GatewayWorld world;
+        /** Backend for the plugin-message side channel; null = disabled. */
+        private final InetSocketAddress backend;
+        private final McPacketIds backendIds = new McPacketIds();
 
         // ---- state ----
         private final Set<WebSocket> conns = ConcurrentHashMap.newKeySet();
@@ -85,12 +99,14 @@ public class PlaceholderServer extends WebSocketServer {
                         });
 
         private PlaceholderServer(int port, String motd, int maxConnections,
-                        int packetsPerSecond, long seed, boolean verbose) {
+                        int packetsPerSecond, long seed, boolean verbose,
+                        InetSocketAddress backend) {
                 super(new InetSocketAddress(port));
                 this.motd = motd;
                 this.maxConnections = maxConnections;
                 this.packetsPerSecond = packetsPerSecond;
                 this.verbose = verbose;
+                this.backend = backend;
                 this.world = new GatewayWorld(seed);
                 setConnectionLostTimeout(30);
                 setReuseAddr(true); // restarts re-bind through TIME_WAIT
@@ -117,6 +133,7 @@ public class PlaceholderServer extends WebSocketServer {
                 int packetsPerSecond = 500;
                 long seed = 2612L;
                 boolean verbose = false;
+                InetSocketAddress backend = null;
 
                 for (int i = 0; i < args.length; i++) {
                         switch (args[i]) {
@@ -126,10 +143,12 @@ public class PlaceholderServer extends WebSocketServer {
                                 case "--rate": packetsPerSecond = Integer.parseInt(args[++i]); break;
                                 case "--seed": seed = Long.parseLong(args[++i]); break;
                                 case "--verbose": verbose = true; break;
+                                case "--backend": backend = parseHostPort(args[++i]); break;
                                 case "--help":
                                 case "-h":
                                         System.out.println("Usage: PlaceholderServer [--port N] [--motd S]"
-                                                        + " [--max-conn N] [--rate N] [--seed N] [--verbose]");
+                                                        + " [--max-conn N] [--rate N] [--seed N] [--verbose]"
+                                                        + " [--backend host:port]");
                                         return;
                                 default:
                                         System.err.println("Unknown argument: " + args[i] + " (try --help)");
@@ -138,7 +157,7 @@ public class PlaceholderServer extends WebSocketServer {
                 }
 
                 PlaceholderServer server = new PlaceholderServer(port, motd,
-                                maxConnections, packetsPerSecond, seed, verbose);
+                                maxConnections, packetsPerSecond, seed, verbose, backend);
                 Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                         // stop() waits for open connections; the halt
                         // guarantees SIGTERM always takes the JVM down
@@ -250,6 +269,27 @@ public class PlaceholderServer extends WebSocketServer {
 
         public int getMaxConnections() {
                 return this.maxConnections;
+        }
+
+        /** The side-channel backend, or null when {@code --backend} is unset. */
+        public InetSocketAddress getBackend() {
+                return this.backend;
+        }
+
+        public McPacketIds getBackendIds() {
+                return this.backendIds;
+        }
+
+        /** "host:port" (port defaults to 25565); unresolved so DNS happens per connect. */
+        static InetSocketAddress parseHostPort(String spec) {
+                String host = spec;
+                int port = 25565;
+                int colon = spec.lastIndexOf(':');
+                if (colon > 0) {
+                        host = spec.substring(0, colon);
+                        port = Integer.parseInt(spec.substring(colon + 1));
+                }
+                return InetSocketAddress.createUnresolved(host, port);
         }
 
         public String getServerBrand() {
