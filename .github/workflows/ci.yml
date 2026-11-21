@@ -453,13 +453,17 @@ jobs:
           #   BridgeRelayTest    - backend bridge vs McProtocolStub over TCP:
           #                        26.1.2 login/config/play + plugin-message relay
           #   PluginChannelsTest - client plugin-channel layer (register, dispatch, limits)
+          #   ApolloProtoTest    - Apollo protobuf/JSON codec vs bytes from an
+          #                        independent encoder (tests/apollo/fixtures.txt)
           javac -d /tmp/gt-classes \
             tests/geometry/*.java \
+            tests/apollo/*.java \
+            sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/apollo/proto/*.java \
             sources/teavm/java/net/minecraft/client/renderer/FaceTables.java \
             sources/teavm/java/net/minecraft/world/item/crafting/CraftingRecipes.java \
             sources/teavm/java/net/lax1dude/eaglercraft/v2_6/client/network/PluginChannels.java \
             gateway/PlaceholderServer/src/main/java/net/lax1dude/eaglercraft/v2_6/placeholder_server/mc/*.java
-          for t in FaceTablesTest RegistryParityTest PhysicsParityTest RecipeParityTest ProtocolFuzzTest BridgeRelayTest PluginChannelsTest; do
+          for t in FaceTablesTest RegistryParityTest PhysicsParityTest RecipeParityTest ProtocolFuzzTest BridgeRelayTest PluginChannelsTest ApolloProtoTest; do
             echo "── $t"
             java -cp /tmp/gt-classes "$t"
           done

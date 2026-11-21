@@ -107,6 +107,10 @@ scripts/*
 !scripts/local_build.sh
 !scripts/gw_real_smoke.mjs
 !scripts/gw_relay_smoke.mjs
+!scripts/gen_apollo_fixtures.cjs
+!scripts/extract_apollo_schema.py
+!scripts/gen_apollo_schema.py
+!scripts/teavm_api_check.py
 !scripts/render_panorama.mjs
 dfu-classes
 sources/resources/assets/
