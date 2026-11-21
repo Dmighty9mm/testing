@@ -45,8 +45,9 @@ single-player/multiplayer client needs first. Per system:
 | Sound | partial | `client/sounds`, `SoundManager` |
 | Multiplayer: connect flow + gateway protocol | done | `network`, `Connection`, `ClientPacketListener` |
 | Plugin messages (custom payloads) + `minecraft:register`, gateway backend side channel (`--backend`) | done (transport only; world still gateway-side) | `client/network/PluginChannels`, `GatewaySession`, `mc/McBridge` |
-| Full play on a real Paper/vanilla backend world (packet translation) | **missing** | planned after the Apollo layer |
-| Apollo server API (`lunar:apollo`, `apollo:json`) | **missing** - next | planned `client/apollo/*` |
+| Full play on a real Paper/vanilla backend world (packet translation) | **missing** | next; needs owner approval (large refactor) |
+| Apollo server API (`lunar:apollo`, `apollo:json`): protobuf + JSON codec, handshake, 25 modules + options-only modules | done (state for all; drawing for non-entity modules; entity modules wait for entities) | `client/apollo/*`, `client/hud/ApolloOverlay`, see `docs/APOLLO.md` |
+| Client mods (FPS, CPS, keystrokes, coords, armor, potions, ping, clock, toggle sprint, zoom, fullbright), mod menu, HUD editor, Apollo debug screen | done (armor/potions/ping have no data source yet) | `client/mods/*`, `client/hud/*` |
 | Mob entities (zombies, animals, item drops, arrows) | **missing** | only `world/entity/player` exists |
 | Redstone, hoppers, other block entities | **missing** | no block-entity system yet |
 | Nether/End dimensions, portals | **missing** | single-dimension world |

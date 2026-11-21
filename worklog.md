@@ -849,3 +849,155 @@ Open / next session:
    for an entity system.
 4. Plan (owner approval required) the full-Paper-play refactor: gateway
    translating real 26.1.2 play packets, or client speaking vanilla play.
+
+---
+Task ID: 16
+Agent: main (project thread "Add Apollo server API support")
+Task: Apollo server API client (protobuf + JSON), tier 1-3 modules, the
+client's own HUD/QoL mods ("PlebMc"), mod menu, HUD editor, Apollo debug
+screen, docs. Follows Task 15 (transport). Owner said "yes go ahead and do
+the rest".
+
+Branch / PR: claude/project-thread-kgpjy6, PR #1 to main (not merged yet).
+
+Commits (in order, all pushed):
+- f4bf7b4 apollo: hand-written protobuf + JSON codec for the Apollo protocol
+- 557bffb apollo: client core (handshake, router, debug log) + tier 1-3 modules
+- 72ca735 client: built-in HUD/QoL mods with server overrides and saved layout
+- c61aeda client: mod menu, HUD editor, Apollo debug screen + overlays, vanilla hooks
+- (this push) docs: Apollo guide, README section, coverage, worklog
+
+Schema source and why:
+- The .proto files could not be fetched (buf.build and Lunar's Maven repo are
+  blocked from the sandbox; the owner's Downloads folder access was declined,
+  do not ask again). The npm package lunar-apollo-protobuf@1.0.2 (GPLv3) was
+  installed in the scratchpad and only READ: scripts/extract_apollo_schema.py
+  pulls message/field/enum facts out of its generated JS into
+  docs/apollo/apollo-schema-1.0.2.json (124 messages incl. a hand-added
+  google.protobuf.Any, 13 enums); scripts/gen_apollo_schema.py turns that into
+  client/apollo/proto/ApolloSchemaData.java (rows "full.Name",
+  "id:name:[r]kind[:type];..."; kinds s y b i I l L z Z f d x X w W e m M).
+  No GPL code is vendored.
+- 1.0.2 is older than current Apollo: newer fields (waypoint/cooldown styles,
+  markers, server links, cosmetics) decode as unknown fields and are skipped.
+  Regenerate from a newer bundle with the two scripts when possible.
+
+Files (sources/teavm/java/net/lax1dude/eaglercraft/v2_6/...):
+- client/apollo/proto/: ProtoException, ProtoReader (bounds-checked varint,
+  zigzag, fixed32/64, length-delimited, skip incl. groups), ProtoWriter,
+  ProtoSchema (Field/MessageType/EnumType, JSON key lookup ignoring case and
+  underscores, typeNameFromUrl), ProtoMessage (typed getters with defaults,
+  getDurationMillis, getEnumName, unknownFieldCount), ProtoCodec
+  (decode/decodeAny/encode/encodeAny, depth cap 48, mismatched wire types
+  skipped, packed repeated accepted), Json (strict parser, depth 64, writer),
+  ProtoJson (@type, snake/camel keys, Duration "1.5s", Timestamp RFC 3339,
+  Value/Struct/ListValue/Any, numeric enums, parseUnsigned64 because TeaVM 0.15
+  lacks Long.parseUnsignedLong), ProtoValues, Base64.
+- client/apollo/: Apollo (facade: registers lunar:apollo + apollo:json with
+  PluginChannels, SessionListener onJoin -> handshake, onReset -> clear every
+  module; replies on the channel the server used; router keyed by type name
+  relative to "lunarclient.apollo."; OverrideConfigurableSettingsMessage
+  applies module enable + properties with proto semantics), ApolloModule base
+  (enable/disable -> reset, properties, tick), ApolloDebugLog (ring of 100,
+  status HANDLED / IGNORED_UNKNOWN / IGNORED_DISABLED / IGNORED_POLICY / ERROR
+  / SENT), ApolloText (Adventure JSON, legacy section codes, Component -> runs),
+  PolicyException.
+- Handshake: PlayerHandshakeMessage{minecraft_version{enum "v26_1_2"},
+  embedded_checkout_support 0}. No lunar client version, no installed mods,
+  minecraft:brand unchanged (owner rule: do not spoof another client's brand).
+- client/apollo/module/: ApolloModules.create() wires tier 1 (waypoint,
+  notification, title, cooldown, team, nametag, border, server_rule,
+  mod_setting, rich_presence), tier 2 (beam, glow, hologram, colored_fire,
+  glint, limb, vignette, stopwatch, tnt_countdown, nick_hider), tier 3 (chat,
+  combat, entity, staff_mod, transfer), options-only modules (packet_enrichment,
+  totem_counter, saturation, auto_text_hotkey, inventory, marker, server_link,
+  cosmetic) and declined pay_now/tebex. Every map has a flood cap.
+  Decisions: StaffModModule refuses XRAY (the only StaffMod enum value) with
+  PolicyException -> IGNORED_POLICY (owner's no-cheats rule; reported as a
+  conflict with "staff mods when the server sends them"). TransferModule
+  answers pings TIMED_OUT and transfers REJECTED (browser cannot open raw
+  host:port). Checkout messages are declined.
+  mod_setting: properties keyed "<mod>.<option>" ("zoom.enabled"); null rolls
+  back. server_rule keys: competitive-game, competitive-commands,
+  override-brightness, brightness, override-nametag-render-distance,
+  nametag-render-distance, override-max-chat-length, max-chat-length,
+  disable-shaders, anti-portal-traps.
+- client/mods/ (pure Java, JVM-testable): ClientInfo.NAME = "PlebMc",
+  ClientView, SettingsStore, HudBox, Mod (id = Apollo mod id, blocked by
+  mod_setting), Mods (fps, cps, keystrokes, coordinates, armorstatus,
+  potion-effects, ping, clock, toggle-sneak[toggle-sprint], zoom[zoom-divisor],
+  lighting[full-bright]; server brightness rule beats fullbright),
+  ModRegistry (JSON persistence key "mods", positions as screen fractions),
+  ClickCounter.
+- client/hud/ (browser glue): HudText, BrowserView, Projector (camera MVP via
+  WorldGlRenderer static helpers), ApolloOverlay (vignette, stopwatch,
+  cooldowns, live chat, titles, notifications, beams, waypoints, holograms,
+  team markers, border edges + warning; GUI quad batch only, no new GL paths),
+  PlebClient (init, Right Shift menu, sprint toggle, CPS clicks, zoom FOV on C,
+  light floor, border movement cancel, HUD render + Apollo.tick), ModMenuScreen,
+  HudEditorScreen (drag via mouseClicked/Released + polled mouse), ApolloDebugScreen.
+- Vanilla hooks (one line each): Minecraft (PlebClient.init after new Gui),
+  Gui.render, KeyboardHandler.keyDown, MouseHandler (before startAttack),
+  KeyboardInput (|| PlebClient.sprintHeld()), GameRenderer (adjustFov +
+  applyLighting), LocalPlayer.move (borderBlocks), WorldGlRenderer (uniform
+  u_minLight, frag max(v_color.rgb * u_skyLight, vec3(u_minLight)); 0 keeps
+  the old output; setMinLight).
+- Tests: tests/apollo/fixtures.txt (12 messages serialized by protobufjs via
+  scripts/gen_apollo_fixtures.cjs), ApolloProtoTest, ApolloClientTest,
+  ClientModsTest. ci.yml geometry-unit now compiles tests/apollo + the apollo
+  and mods packages and runs the three new tests.
+- scripts/teavm_api_check.py: checks compiled classes only use JDK members
+  present in the TeaVM 0.15 classlib jar (handles inherited members,
+  getMessage -> getMessage0 rename); validated with a negative control.
+- New scripts whitelisted in .gitignore: gen_apollo_fixtures.cjs,
+  extract_apollo_schema.py, gen_apollo_schema.py, teavm_api_check.py.
+- Docs (this push): docs/APOLLO.md (architecture, module status table, client
+  mods, local Paper + Apollo + PlaceholderServer --backend setup, example-plugin
+  command list with expected results, tests, licenses), README section
+  "Apollo Server API and PlebMc Mods", IMPLEMENTATION-COVERAGE rows.
+
+Bugs found and fixed during the work:
+- Schema extractor missed quoted ["enum"] properties -> regex fixed.
+- Fixture generator hit a protobufjs oneof error (itemId + itemName) -> itemName only.
+- protobufjs JSON for Value is not proto3 JSON -> reference-JSON compare skipped
+  for those fixtures (binary compare still done).
+- TeaVM has no Long.parseUnsignedLong -> manual parseUnsigned64.
+- ClientModsTest CPS expectation was wrong (3, not 4).
+- Full-tree javac needs authlib/datafixers -> touched files compiled with
+  -sourcepath + stubs: 455 classes clean.
+
+Verification actually performed (2026-11-21, local JVM, same command list as
+CI geometry-unit): FaceTablesTest ok, RegistryParityTest failures=0,
+PhysicsParityTest failures=0, RecipeParityTest failures=0, ProtocolFuzzTest
+failures=0, BridgeRelayTest 28 checks 0 failures, PluginChannelsTest 33/0,
+ApolloProtoTest 116/0 (byte-identical re-encode of every fixture, 25k fuzzed
+payloads never throw), ApolloClientTest 44/0, ClientModsTest 28/0. A mutation
+(broken sint32 zigzag) was caught by ApolloProtoTest.
+
+NOT verified:
+- The real TeaVM build (Gradle/Maven blocked in the sandbox) - only the API
+  checker. CI must confirm.
+- e2e / live site: every "Build PR Preview" run fails in ~4 s with no runner
+  (account-level GitHub Actions problem, already reported to the owner);
+  ci.yml runs on push to main only.
+- No real Paper + Apollo server was available.
+
+Known limitations: entity-based modules (nametag, glow, colored fire, limb,
+tnt countdown, entity) keep state but draw nothing until entities exist; ping
+mod shows n/a and armor/potions are empty (no data source in the port);
+full play on a real Paper world is still missing, so Apollo works over the
+relay side channel while the visible world stays the gateway's.
+
+Licenses: repo MIT (Copyright (c) 2025 lax1dude, keep LICENSE); Apollo MIT,
+no code included; lunar-apollo-protobuf GPLv3 used only as a fact source and
+independent fixture encoder, not vendored. No licence conflict; the only
+conflict in the request is X-ray vs no-cheats (refused, owner informed).
+
+Next session:
+1. After the Actions runner problem is fixed: merge PR #1, confirm CI build ->
+   geometry-unit -> e2e -> deploy green, check the live bundle contains the
+   Apollo classes, open Right Shift menu on the live site.
+2. Test against a real Paper + Apollo + example plugin using docs/APOLLO.md.
+3. Regenerate the schema from a newer Apollo protos bundle if obtainable.
+4. Full Paper play refactor - needs the owner's explicit OK first.
+5. Ping source (keepalive RTT), armor/effects once those systems exist.

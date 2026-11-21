@@ -21,6 +21,7 @@
 - [Performance Benchmarks](#performance-benchmarks)
 - [Browser Compatibility](#browser-compatibility)
 - [End-to-End Tests](#end-to-end-tests)
+- [Apollo Server API and PlebMc Mods](#apollo-server-api-and-plebmc-mods)
 - [Known Limitations](#known-limitations)
 - [Contributing](#contributing)
 - [License](#license)
@@ -851,6 +852,31 @@ suite against their preview build.
 
 See [docs/E2E.md](docs/E2E.md) for the full list of assertions, local usage and
 troubleshooting.
+
+---
+
+## Apollo Server API and PlebMc Mods
+
+The client implements the client side of the **Apollo** server API on the
+`lunar:apollo` (protobuf) and `apollo:json` (JSON) plugin channels, so servers
+running the Apollo plugin can show waypoints, notifications, titles, cooldowns,
+borders, beams, holograms, stopwatches, vignettes and live chat lines, set server
+rules, and force-disable client mods. Those channel names are protocol
+identifiers only: the client identifies as **PlebMc** and never claims to be any
+other client. The handshake sends only the Minecraft version.
+
+Built-in mods (FPS, CPS, keystrokes, coordinates, armor, potion effects, ping,
+clock, toggle sprint, zoom, fullbright) are configured in game:
+
+- **Right Shift**: mod menu (toggle mods, "Edit HUD layout" to drag elements,
+  "Apollo debug" to see module states and the last 100 Apollo messages)
+- **C** (hold): zoom
+- Mods a server disables through Apollo show "Blocked by server".
+
+No cheats: the only staff mod Apollo defines (X-ray) is refused.
+
+Full details, module status table, the local Paper + Apollo + gateway test setup
+and a command list that triggers every module: [docs/APOLLO.md](docs/APOLLO.md).
 
 ---
 
