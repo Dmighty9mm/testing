@@ -19,6 +19,10 @@ def has_member(tcls, m, seen=None):
     if tcls in seen: return False
     seen.add(tcls)
     txt = members(tcls)
+    if m in ('toString', 'equals', 'hashCode', 'getClass'):
+        return True  # java.lang.Object members, present on every class
+    # TeaVM renames some members it implements natively (TThrowable.getMessage0 -> getMessage)
+    if re.search(r'[\s.]' + re.escape(m) + r'0\(', txt): return True
     if re.search(r'[\s.]' + re.escape(m) + r'\(', txt) or re.search(r'\s' + re.escape(m) + r';', txt): return True
     head = txt.split('{')[0]
     for sup in re.findall(r'(org\.teavm\.classlib\.[\w.$]+|java\.lang\.Object)', head.split(' extends ',1)[-1] if ' extends ' in head or ' implements ' in head else ''):
