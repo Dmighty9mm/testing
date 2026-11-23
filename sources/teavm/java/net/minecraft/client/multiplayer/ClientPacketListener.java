@@ -1,5 +1,6 @@
 package net.minecraft.client.multiplayer;
 
+import net.lax1dude.eaglercraft.v2_6.client.network.PluginChannels;
 import net.lax1dude.eaglercraft.v2_6.internal.teavm.ClientMain;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.multiplayer.DisconnectedScreen;
@@ -29,6 +30,9 @@ import net.minecraft.world.level.block.Blocks;
  *       and hotbar state.</li>
  *   <li>player position: server teleports snap the player (confirmed).</li>
  *   <li>movement pump: the vanilla move-packet choice rule per tick.</li>
+ *   <li>plugin messages (config 0x00 / play 0x14): handed to
+ *       {@link PluginChannels}, which announces the client's channels
+ *       ({@code minecraft:register}) once play starts.</li>
  * </ul>
  */
 public class ClientPacketListener implements Connection.Listener {
@@ -55,6 +59,25 @@ public class ClientPacketListener implements Connection.Listener {
 
         public void attach(Connection connection) {
                 this.connection = connection;
+                // fresh connection: drop any per-connection channel state
+                PluginChannels.reset();
+                PluginChannels.setLog(new PluginChannels.Log() {
+                        @Override
+                        public void info(String msg) {
+                                ClientMain.log(msg);
+                        }
+
+                        @Override
+                        public void warn(String msg) {
+                                ClientMain.warn(msg);
+                        }
+                });
+                PluginChannels.attach(new PluginChannels.Sender() {
+                        @Override
+                        public boolean send(String channel, byte[] data) {
+                                return connection.sendPluginMessage(channel, data);
+                        }
+                });
         }
 
         public String getStageText() {
@@ -77,6 +100,7 @@ public class ClientPacketListener implements Connection.Listener {
                                         ClientMain.log("[ClientPacketListener] server brand: "
                                                         + brand.readUtf());
                                 }
+                                PluginChannels.dispatch(channel, data);
                                 break;
                         }
                         case Connection.S2C_CONFIG_REGISTRY_DATA: {
@@ -148,6 +172,11 @@ public class ClientPacketListener implements Connection.Listener {
                         case Connection.S2C_PLAY_PLAYER_POSITION:
                                 this.handlePlayerPosition(buf);
                                 break;
+                        case Connection.S2C_PLAY_PLUGIN_MESSAGE: {
+                                String channel = buf.readUtf();
+                                PluginChannels.dispatch(channel, buf.readRemaining());
+                                break;
+                        }
                         case Connection.S2C_PLAY_SYSTEM_CHAT: {
                                 String json = buf.readUtf();
                                 ClientMain.log("[chat] "
@@ -188,6 +217,8 @@ public class ClientPacketListener implements Connection.Listener {
                 this.minecraft.doMultiplayerJoin(this, this.serverAddress, entityId,
                                 gameMode, dimension, difficulty, hardcore,
                                 dayTime, gameTime, spawnX, spawnY, spawnZ);
+                // in play: announce our plugin channels (minecraft:register)
+                PluginChannels.onJoin();
         }
 
         /**

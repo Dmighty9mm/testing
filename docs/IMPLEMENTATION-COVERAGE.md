@@ -44,6 +44,10 @@ single-player/multiplayer client needs first. Per system:
 | Sky: day/night timeline, sun/moon, sky colors | done | `SkyTimeline`, `SkyRenderer` |
 | Sound | partial | `client/sounds`, `SoundManager` |
 | Multiplayer: connect flow + gateway protocol | done | `network`, `Connection`, `ClientPacketListener` |
+| Plugin messages (custom payloads) + `minecraft:register`, gateway backend side channel (`--backend`) | done (transport only; world still gateway-side) | `client/network/PluginChannels`, `GatewaySession`, `mc/McBridge` |
+| Full play on a real Paper/vanilla backend world (packet translation) | **missing** | next; needs owner approval (large refactor) |
+| Apollo server API (`lunar:apollo`, `apollo:json`): protobuf + JSON codec, handshake, 25 modules + options-only modules | done (state for all; drawing for non-entity modules; entity modules wait for entities) | `client/apollo/*`, `client/hud/ApolloOverlay`, see `docs/APOLLO.md` |
+| Client mods (FPS, CPS, keystrokes, coords, armor, potions, ping, clock, toggle sprint, zoom, fullbright), mod menu, HUD editor, Apollo debug screen | done (armor/potions/ping have no data source yet) | `client/mods/*`, `client/hud/*` |
 | Mob entities (zombies, animals, item drops, arrows) | **missing** | only `world/entity/player` exists |
 | Redstone, hoppers, other block entities | **missing** | no block-entity system yet |
 | Nether/End dimensions, portals | **missing** | single-dimension world |
@@ -57,7 +61,7 @@ existing entity walk).
 
 | Layer | Runtime | What it locks | Files |
 | --- | --- | --- | --- |
-| JVM unit (CI job `geometry-unit`) | ~25 s incl. checkout | face geometry invariants vs the decompile (corners, planes, winding, UV, packing) + decompile-canary parity for the block registry (159 blocks), movement constants (gravity/jump/friction/accel/fly/walk), the generated recipe table (structure + vanilla truths) and seeded wire-codec fuzz (12k+ round-trips, differential encoder, malformed-input rejection) | `tests/geometry/*Test.java` (5 tests) |
+| JVM unit (CI job `geometry-unit`) | ~25 s incl. checkout | face geometry invariants vs the decompile (corners, planes, winding, UV, packing) + decompile-canary parity for the block registry (159 blocks), movement constants (gravity/jump/friction/accel/fly/walk), the generated recipe table (structure + vanilla truths), seeded wire-codec fuzz (12k+ round-trips, differential encoder, malformed-input rejection), the backend bridge's 26.1.2 login/config/play walk + plugin-message relay over real TCP (28 checks) and the client plugin-channel layer (33 checks) | `tests/geometry/*Test.java` (7 tests) |
 | Playwright e2e (21 specs, 53 tests, CI shard 3×) | the deploy gate | boot, title/worlds/options screens, world entry, HUD, movement tick clock, dig/place mechanics, the six-face placement culling matrix + section-border remesh + real right-click path, creative world creation through the real UI + vanilla flight rules + instant break, save-quit + full-reload persistence round trip, seeded input-chaos fuzz with per-round crash/NaN/responsiveness invariants, inventory + creative picker, crafting recipes, sky cycle, multiplayer navigation, gateway protocol, WebGL context, VBO plane invariants incl. hole walls | `tests/e2e/*.spec.ts` |
 | Production probes (manual, after deploys) | minutes | live-site panorama spin, walk b/tick vs vanilla, mesh x-rays via `debugMesh`, screenshots with cull on/off | `scripts/probe_*.mjs` |
 

@@ -1,0 +1,2288 @@
+{
+ "enums": {
+  "google.protobuf.NullValue": {
+   "NULL_VALUE": 0
+  },
+  "lunarclient.apollo.common.v1.Component.TextDecorator": {
+   "TEXT_DECORATOR_BOLD": 2,
+   "TEXT_DECORATOR_ITALIC": 5,
+   "TEXT_DECORATOR_OBFUSCATED": 1,
+   "TEXT_DECORATOR_STRIKETHROUGH": 3,
+   "TEXT_DECORATOR_UNDERLINED": 4,
+   "TEXT_DECORATOR_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.evnt.v1.CharacterType": {
+   "CHARACTER_TYPE_ANGEL": 1,
+   "CHARACTER_TYPE_AXEL": 2,
+   "CHARACTER_TYPE_BANJAX": 3,
+   "CHARACTER_TYPE_DAEDRA": 4,
+   "CHARACTER_TYPE_FROSKA": 5,
+   "CHARACTER_TYPE_GRANNY": 6,
+   "CHARACTER_TYPE_GREAT_MAGE": 7,
+   "CHARACTER_TYPE_HARMONY": 11,
+   "CHARACTER_TYPE_IGNUS": 8,
+   "CHARACTER_TYPE_SIR_BLOCK": 10,
+   "CHARACTER_TYPE_TULABOT": 9,
+   "CHARACTER_TYPE_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.evnt.v1.GuiType": {
+   "GUI_TYPE_CHARACTER_SELECTION": 2,
+   "GUI_TYPE_ESC": 5,
+   "GUI_TYPE_OBSERVER_UI": 3,
+   "GUI_TYPE_PLAYER_INVENTORY": 6,
+   "GUI_TYPE_SUIT": 1,
+   "GUI_TYPE_UNSPECIFIED": 0,
+   "GUI_TYPE_WELCOME_UI": 4
+  },
+  "lunarclient.apollo.limb.v1.ArmorPiece": {
+   "ARMOR_PIECE_BOOTS": 4,
+   "ARMOR_PIECE_CHESTPLATE": 2,
+   "ARMOR_PIECE_HELMET": 1,
+   "ARMOR_PIECE_LEGGINGS": 3,
+   "ARMOR_PIECE_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.limb.v1.BodyPart": {
+   "BODY_PART_HEAD": 1,
+   "BODY_PART_LEFT_ARM": 3,
+   "BODY_PART_LEFT_LEG": 5,
+   "BODY_PART_RIGHT_ARM": 4,
+   "BODY_PART_RIGHT_LEG": 6,
+   "BODY_PART_TORSO": 2,
+   "BODY_PART_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.packetenrichment.v1.Direction": {
+   "DIRECTION_DOWN": 1,
+   "DIRECTION_EAST": 6,
+   "DIRECTION_NORTH": 3,
+   "DIRECTION_SOUTH": 4,
+   "DIRECTION_UNSPECIFIED": 0,
+   "DIRECTION_UP": 2,
+   "DIRECTION_WEST": 5
+  },
+  "lunarclient.apollo.player.v1.EmbeddedCheckoutSupport": {
+   "EMBEDDED_CHECKOUT_SUPPORT_OVERLAY": 1,
+   "EMBEDDED_CHECKOUT_SUPPORT_UNSPECIFIED": 0,
+   "EMBEDDED_CHECKOUT_SUPPORT_WINDOW": 2
+  },
+  "lunarclient.apollo.player.v1.ModMessage.Type": {
+   "TYPE_FABRIC_EXTERNAL": 2,
+   "TYPE_FABRIC_INTERNAL": 1,
+   "TYPE_FORGE_EXTERNAL": 4,
+   "TYPE_FORGE_INTERNAL": 3,
+   "TYPE_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.staffmod.v1.StaffMod": {
+   "STAFF_MOD_UNSPECIFIED": 0,
+   "STAFF_MOD_XRAY": 1
+  },
+  "lunarclient.apollo.title.v1.TitleType": {
+   "TITLE_TYPE_SUBTITLE": 2,
+   "TITLE_TYPE_TITLE": 1,
+   "TITLE_TYPE_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.transfer.v1.PingData.Status": {
+   "STATUS_SUCCESS": 1,
+   "STATUS_TIMED_OUT": 2,
+   "STATUS_UNSPECIFIED": 0
+  },
+  "lunarclient.apollo.transfer.v1.TransferResponse.Status": {
+   "STATUS_ACCEPTED": 1,
+   "STATUS_REJECTED": 2,
+   "STATUS_UNSPECIFIED": 0
+  }
+ },
+ "messages": {
+  "google.protobuf.Duration": [
+   {
+    "id": 1,
+    "jstype": "number|Long|null",
+    "m": "int64",
+    "name": "seconds",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "nanos",
+    "wt": 0
+   }
+  ],
+  "google.protobuf.ListValue": [
+   {
+    "id": 1,
+    "jstype": "Array.<google.protobuf.IValue>|null",
+    "m": "message",
+    "name": "values",
+    "wt": 2
+   }
+  ],
+  "google.protobuf.Struct": [
+   {
+    "id": 1,
+    "jstype": "Object.<string,google.protobuf.IValue>|null",
+    "m": "message",
+    "name": "fields",
+    "wt": 2
+   }
+  ],
+  "google.protobuf.Timestamp": [
+   {
+    "id": 1,
+    "jstype": "number|Long|null",
+    "m": "int64",
+    "name": "seconds",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "nanos",
+    "wt": 0
+   }
+  ],
+  "google.protobuf.Value": [
+   {
+    "id": 1,
+    "jstype": "google.protobuf.NullValue|null",
+    "m": "int32",
+    "name": "nullValue",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "numberValue",
+    "wt": 1
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "stringValue",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "boolValue",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "google.protobuf.IStruct|null",
+    "m": "message",
+    "name": "structValue",
+    "wt": 2
+   },
+   {
+    "id": 6,
+    "jstype": "google.protobuf.IListValue|null",
+    "m": "message",
+    "name": "listValue",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.beam.v1.DisplayBeaconBeamMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.IBlockLocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.beam.v1.RemoveBeaconBeamMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.beam.v1.ResetBeaconBeamsMessage": [],
+  "lunarclient.apollo.border.v1.DisplayBorderMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "world",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "cancelEntry",
+    "wt": 0
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "cancelExit",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "canShrinkOrExpand",
+    "wt": 0
+   },
+   {
+    "id": 6,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   },
+   {
+    "id": 7,
+    "jstype": "lunarclient.apollo.common.v1.ICuboid2D|null",
+    "m": "message",
+    "name": "bounds",
+    "wt": 2
+   },
+   {
+    "id": 8,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "durationTicks",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.border.v1.RemoveBorderMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.border.v1.ResetBordersMessage": [],
+  "lunarclient.apollo.chat.v1.DisplayLiveChatMessageMessage": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "messageId",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "adventureJsonLines",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.chat.v1.RemoveLiveChatMessageMessage": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "messageId",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.coloredfire.v1.OverrideColoredFireMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.coloredfire.v1.ResetColoredFireMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.coloredfire.v1.ResetColoredFiresMessage": [],
+  "lunarclient.apollo.common.v1.AdvancedResourceLocationIcon": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "resourceLocation",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "width",
+    "wt": 5
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "height",
+    "wt": 5
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "minU",
+    "wt": 5
+   },
+   {
+    "id": 5,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "maxU",
+    "wt": 5
+   },
+   {
+    "id": 6,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "minV",
+    "wt": 5
+   },
+   {
+    "id": 7,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "maxV",
+    "wt": 5
+   }
+  ],
+  "lunarclient.apollo.common.v1.BlockLocation": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "world",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "sint32",
+    "name": "x",
+    "wt": 0
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "sint32",
+    "name": "y",
+    "wt": 0
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "sint32",
+    "name": "z",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.common.v1.Color": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "color",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.common.v1.Component": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "content",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "Array.<lunarclient.apollo.common.v1.Component.TextDecorator>|null",
+    "m": "int32",
+    "name": "decorators",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IComponent>|null",
+    "m": "message",
+    "name": "children",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.Cuboid2D": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "minX",
+    "wt": 1
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "minZ",
+    "wt": 1
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "maxX",
+    "wt": 1
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "maxZ",
+    "wt": 1
+   }
+  ],
+  "lunarclient.apollo.common.v1.Cuboid3D": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "minX",
+    "wt": 1
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "minY",
+    "wt": 1
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "minZ",
+    "wt": 1
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "maxX",
+    "wt": 1
+   },
+   {
+    "id": 5,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "maxY",
+    "wt": 1
+   },
+   {
+    "id": 6,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "maxZ",
+    "wt": 1
+   }
+  ],
+  "lunarclient.apollo.common.v1.EntityId": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "entityId",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "entityUuid",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.Icon": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IItemStackIcon|null",
+    "m": "message",
+    "name": "itemStack",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.ISimpleResourceLocationIcon|null",
+    "m": "message",
+    "name": "simpleResourceLocation",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.IAdvancedResourceLocationIcon|null",
+    "m": "message",
+    "name": "advancedResourceLocation",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.ItemStackIcon": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "itemId",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "itemName",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "customModelData",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.common.v1.Location": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "world",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "x",
+    "wt": 1
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "y",
+    "wt": 1
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "z",
+    "wt": 1
+   }
+  ],
+  "lunarclient.apollo.common.v1.LunarClientVersion": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "gitBranch",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "gitCommit",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "semver",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.MinecraftVersion": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "?",
+    "name": "enum",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.PlayerLocation": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "yaw",
+    "wt": 5
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "pitch",
+    "wt": 5
+   }
+  ],
+  "lunarclient.apollo.common.v1.SimpleResourceLocationIcon": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "resourceLocation",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "size",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.common.v1.SimpleResourceLocationSound": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "resourceLocation",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.Sound": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.ISimpleResourceLocationSound|null",
+    "m": "message",
+    "name": "simpleResourceLocation",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.common.v1.Uuid": [
+   {
+    "id": 1,
+    "jstype": "number|Long|null",
+    "m": "fixed64",
+    "name": "high64",
+    "wt": 1
+   },
+   {
+    "id": 2,
+    "jstype": "number|Long|null",
+    "m": "fixed64",
+    "name": "low64",
+    "wt": 1
+   }
+  ],
+  "lunarclient.apollo.configurable.v1.ConfigurableSettings": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "lunarClientMod",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "apolloModule",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "enable",
+    "wt": 0
+   },
+   {
+    "id": 4,
+    "jstype": "Object.<string,google.protobuf.IValue>|null",
+    "m": "message",
+    "name": "properties",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.configurable.v1.OverrideConfigurableSettingsMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.configurable.v1.IConfigurableSettings>|null",
+    "m": "message",
+    "name": "configurableSettings",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.cooldown.v1.DisplayCooldownMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "name",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "google.protobuf.IDuration|null",
+    "m": "message",
+    "name": "duration",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.IIcon|null",
+    "m": "message",
+    "name": "icon",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.cooldown.v1.RemoveCooldownMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "name",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.cooldown.v1.ResetCooldownsMessage": [],
+  "lunarclient.apollo.entity.v1.FlipEntityMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IEntityId>|null",
+    "m": "message",
+    "name": "entityIds",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.entity.v1.OverrideRainbowSheepMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IEntityId>|null",
+    "m": "message",
+    "name": "entityIds",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.entity.v1.ResetFlipedEntityMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IEntityId>|null",
+    "m": "message",
+    "name": "entityIds",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.entity.v1.ResetRainbowSheepMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IEntityId>|null",
+    "m": "message",
+    "name": "entityIds",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.CharacterAbilityMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.evnt.v1.CharacterType|null",
+    "m": "int32",
+    "name": "characterType",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "abilitiesAdventure",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.CloseGuiMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.evnt.v1.GuiType|null",
+    "m": "int32",
+    "name": "guiType",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.EventGameOverviewMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.evnt.v1.IEventTeamStatusMessage|null",
+    "m": "message",
+    "name": "teamOneStatus",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.evnt.v1.IEventTeamStatusMessage|null",
+    "m": "message",
+    "name": "teamTwoStatus",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "tierThreeHealth",
+    "wt": 5
+   },
+   {
+    "id": 4,
+    "jstype": "number|Long|null",
+    "m": "int64",
+    "name": "gameStartTime",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "witherShields",
+    "wt": 0
+   },
+   {
+    "id": 6,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "lockGameTime",
+    "wt": 0
+   },
+   {
+    "id": 7,
+    "jstype": "number|Long|null",
+    "m": "int64",
+    "name": "midRespawnTime",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.EventOverviewMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.evnt.v1.IEventPlayerMessage>|null",
+    "m": "message",
+    "name": "players",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.EventPlayerMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "playerNameAdventure",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.evnt.v1.CharacterType|null",
+    "m": "int32",
+    "name": "characterType",
+    "wt": 0
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "teamOne",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.EventPlayerStatusMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "health",
+    "wt": 5
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "ultimatePercentage",
+    "wt": 5
+   },
+   {
+    "id": 4,
+    "jstype": "number|Long|null",
+    "m": "int64",
+    "name": "respawnAt",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.EventStatusOverviewMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.evnt.v1.IEventPlayerStatusMessage>|null",
+    "m": "message",
+    "name": "teamOneStatus",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.evnt.v1.IEventPlayerStatusMessage>|null",
+    "m": "message",
+    "name": "teamTwoStatus",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.EventTeamStatusMessage": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "topWitherHealth",
+    "wt": 5
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "topCrystalHealth",
+    "wt": 5
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "middleWitherHealth",
+    "wt": 5
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "middleCrystalHealth",
+    "wt": 5
+   },
+   {
+    "id": 5,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "bottomWitherHealth",
+    "wt": 5
+   },
+   {
+    "id": 6,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "bottomCrystalHealth",
+    "wt": 5
+   },
+   {
+    "id": 7,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "dragonHealth",
+    "wt": 5
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OpenGuiMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.evnt.v1.GuiType|null",
+    "m": "int32",
+    "name": "guiType",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OverrideCharacterAbilityMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.evnt.v1.ICharacterAbilityMessage>|null",
+    "m": "message",
+    "name": "abilities",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OverrideCharacterCosmeticMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.evnt.v1.CharacterType|null",
+    "m": "int32",
+    "name": "characterType",
+    "wt": 0
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "suitName",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OverrideCharacterMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.evnt.v1.CharacterType|null",
+    "m": "int32",
+    "name": "characterType",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "equipped",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "suitName",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OverrideCharacterSuitResourcesMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.evnt.v1.CharacterType|null",
+    "m": "int32",
+    "name": "characterType",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "suitNames",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OverrideCosmeticResourcesMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.evnt.v1.CharacterType|null",
+    "m": "int32",
+    "name": "characterType",
+    "wt": 0
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "modelPath",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "animationPath",
+    "wt": 2
+   },
+   {
+    "id": 5,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "texturePath",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.OverrideHeartTextureMessage": [
+   {
+    "id": 1,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "locationX",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "hardcore",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.evnt.v1.ResetHeartTextureMessage": [],
+  "lunarclient.apollo.evnt.v1.UpdateCosmeticsMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "modelLocations",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "animationLocations",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.glow.v1.OverrideGlowEffectMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.glow.v1.ResetGlowEffectMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.glow.v1.ResetGlowEffectsMessage": [],
+  "lunarclient.apollo.hologram.v1.DisplayHologramMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IComponent>|null",
+    "m": "message",
+    "name": "lines",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "showThroughWalls",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "showShadow",
+    "wt": 0
+   },
+   {
+    "id": 6,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "showBackground",
+    "wt": 0
+   },
+   {
+    "id": 7,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "adventureJsonLines",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.hologram.v1.RemoveHologramMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.hologram.v1.ResetHologramsMessage": [],
+  "lunarclient.apollo.limb.v1.HideArmorPiecesMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.limb.v1.ArmorPiece>|null",
+    "m": "int32",
+    "name": "armorPieces",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.limb.v1.HideBodyPartMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.limb.v1.BodyPart>|null",
+    "m": "int32",
+    "name": "bodyParts",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.limb.v1.ResetArmorPiecesMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.limb.v1.ArmorPiece>|null",
+    "m": "int32",
+    "name": "armorPieces",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.limb.v1.ResetBodyPartMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.limb.v1.BodyPart>|null",
+    "m": "int32",
+    "name": "bodyParts",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.nametag.v1.OverrideNametagMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.common.v1.IComponent>|null",
+    "m": "message",
+    "name": "lines",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "adventureJsonLines",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.nametag.v1.ResetNametagMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.nametag.v1.ResetNametagsMessage": [],
+  "lunarclient.apollo.nickhider.v1.OverrideNickHiderMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "nick",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.nickhider.v1.ResetNickHiderMessage": [],
+  "lunarclient.apollo.notification.v1.DisplayNotificationMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "title",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "description",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "resourceLocation",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "google.protobuf.IDuration|null",
+    "m": "message",
+    "name": "displayTime",
+    "wt": 2
+   },
+   {
+    "id": 5,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "titleAdventureJsonLines",
+    "wt": 2
+   },
+   {
+    "id": 6,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "descriptionAdventureJsonLines",
+    "wt": 2
+   },
+   {
+    "id": 7,
+    "jstype": "lunarclient.apollo.common.v1.IIcon|null",
+    "m": "message",
+    "name": "icon",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.notification.v1.ResetNotificationsMessage": [],
+  "lunarclient.apollo.packetenrichment.v1.BlockHit": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "hitLocation",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IBlockLocation|null",
+    "m": "message",
+    "name": "blockLocation",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.Direction|null",
+    "m": "int32",
+    "name": "direction",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.EntityHit": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "hitLocation",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IEntityId|null",
+    "m": "message",
+    "name": "entityId",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.Miss": [],
+  "lunarclient.apollo.packetenrichment.v1.PacketInfo": [
+   {
+    "id": 1,
+    "jstype": "google.protobuf.ITimestamp|null",
+    "m": "message",
+    "name": "instantiationTime",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.PlayerAttackMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPacketInfo|null",
+    "m": "message",
+    "name": "packetInfo",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPlayerInfo|null",
+    "m": "message",
+    "name": "targetInfo",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPlayerInfo|null",
+    "m": "message",
+    "name": "attackerInfo",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "number|null",
+    "m": "double",
+    "name": "distance",
+    "wt": 1
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.PlayerChatCloseMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPlayerInfo|null",
+    "m": "message",
+    "name": "playerInfo",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPacketInfo|null",
+    "m": "message",
+    "name": "packetInfo",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.PlayerChatOpenMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPlayerInfo|null",
+    "m": "message",
+    "name": "playerInfo",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPacketInfo|null",
+    "m": "message",
+    "name": "packetInfo",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.PlayerInfo": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IPlayerLocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "sneaking",
+    "wt": 0
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "sprinting",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "jumping",
+    "wt": 0
+   },
+   {
+    "id": 6,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "forwardSpeed",
+    "wt": 5
+   },
+   {
+    "id": 7,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "strafeSpeed",
+    "wt": 5
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.PlayerUseItemBucketMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPacketInfo|null",
+    "m": "message",
+    "name": "packetInfo",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPlayerInfo|null",
+    "m": "message",
+    "name": "playerInfo",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IRayTraceResult|null",
+    "m": "message",
+    "name": "rayTraceResult",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.PlayerUseItemMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPacketInfo|null",
+    "m": "message",
+    "name": "packetInfo",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IPlayerInfo|null",
+    "m": "message",
+    "name": "playerInfo",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "mainHand",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.packetenrichment.v1.RayTraceResult": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IBlockHit|null",
+    "m": "message",
+    "name": "block",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IEntityHit|null",
+    "m": "message",
+    "name": "entity",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.packetenrichment.v1.IMiss|null",
+    "m": "message",
+    "name": "miss",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.paynow.v1.OpenPayNowEmbeddedCheckoutMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "checkoutToken",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.pingmarker.v1.DisplayPlayerPingMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "type",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   },
+   {
+    "id": 5,
+    "jstype": "lunarclient.apollo.common.v1.IIcon|null",
+    "m": "message",
+    "name": "icon",
+    "wt": 2
+   },
+   {
+    "id": 6,
+    "jstype": "lunarclient.apollo.common.v1.ISound|null",
+    "m": "message",
+    "name": "sound",
+    "wt": 2
+   },
+   {
+    "id": 7,
+    "jstype": "google.protobuf.IDuration|null",
+    "m": "message",
+    "name": "duration",
+    "wt": 2
+   },
+   {
+    "id": 8,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "focus",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.pingmarker.v1.RemovePingMarkerTypeMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.pingmarker.v1.RemovePlayerPingMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "id",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.pingmarker.v1.RequestPlayerPingMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "type",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "sourceLocation",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "targetLocation",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.pingmarker.v1.ResetPingMarkerTypesMessage": [],
+  "lunarclient.apollo.pingmarker.v1.ResetPlayerPingMessage": [],
+  "lunarclient.apollo.pingmarker.v1.SetPingMarkerTypeMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IIcon|null",
+    "m": "message",
+    "name": "icon",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.pingmarker.v1.SetPingMarkerTypesMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.pingmarker.v1.ISetPingMarkerTypeMessage>|null",
+    "m": "message",
+    "name": "types",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.player.v1.ModMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "id",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "name",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "version",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "lunarclient.apollo.player.v1.ModMessage.Type|null",
+    "m": "int32",
+    "name": "type",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.player.v1.PlayerHandshakeMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IMinecraftVersion|null",
+    "m": "message",
+    "name": "minecraftVersion",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.ILunarClientVersion|null",
+    "m": "message",
+    "name": "lunarClientVersion",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "Array.<lunarclient.apollo.player.v1.IModMessage>|null",
+    "m": "message",
+    "name": "installedMods",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "lunarclient.apollo.player.v1.EmbeddedCheckoutSupport|null",
+    "m": "int32",
+    "name": "embeddedCheckoutSupport",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "Object.<string,google.protobuf.IValue>|null",
+    "m": "message",
+    "name": "modStatus",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.player.v1.UpdatePlayerWorldMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "world",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.richpresence.v1.OverrideServerRichPresenceMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "gameName",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "gameVariantName",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "gameState",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "playerState",
+    "wt": 2
+   },
+   {
+    "id": 5,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "mapName",
+    "wt": 2
+   },
+   {
+    "id": 6,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "subServer",
+    "wt": 2
+   },
+   {
+    "id": 7,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "teamCurrentSize",
+    "wt": 0
+   },
+   {
+    "id": 8,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "teamMaxSize",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.richpresence.v1.ResetServerRichPresenceMessage": [],
+  "lunarclient.apollo.staffmod.v1.DisableStaffModsMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.staffmod.v1.StaffMod>|null",
+    "m": "int32",
+    "name": "staffMods",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.staffmod.v1.EnableStaffModsMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.staffmod.v1.StaffMod>|null",
+    "m": "int32",
+    "name": "staffMods",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.stopwatch.v1.ResetStopwatchMessage": [],
+  "lunarclient.apollo.stopwatch.v1.StartStopwatchMessage": [],
+  "lunarclient.apollo.stopwatch.v1.StopStopwatchMessage": [],
+  "lunarclient.apollo.team.v1.ResetTeamMembersMessage": [],
+  "lunarclient.apollo.team.v1.TeamMember": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IUuid|null",
+    "m": "message",
+    "name": "playerUuid",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IComponent|null",
+    "m": "message",
+    "name": "playerDisplayName",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.ILocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "markerColor",
+    "wt": 2
+   },
+   {
+    "id": 5,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "adventureJsonPlayerName",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.team.v1.UpdateTeamMembersMessage": [
+   {
+    "id": 1,
+    "jstype": "Array.<lunarclient.apollo.team.v1.ITeamMember>|null",
+    "m": "message",
+    "name": "members",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.tebex.v1.OpenTebexEmbeddedCheckoutMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "basketIdent",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "locale",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.title.v1.DisplayTitleMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.title.v1.TitleType|null",
+    "m": "int32",
+    "name": "titleType",
+    "wt": 0
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IComponent|null",
+    "m": "message",
+    "name": "message",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "scale",
+    "wt": 5
+   },
+   {
+    "id": 4,
+    "jstype": "google.protobuf.IDuration|null",
+    "m": "message",
+    "name": "fadeInTime",
+    "wt": 2
+   },
+   {
+    "id": 5,
+    "jstype": "google.protobuf.IDuration|null",
+    "m": "message",
+    "name": "displayTime",
+    "wt": 2
+   },
+   {
+    "id": 6,
+    "jstype": "google.protobuf.IDuration|null",
+    "m": "message",
+    "name": "fadeOutTime",
+    "wt": 2
+   },
+   {
+    "id": 7,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "adventureJsonMessage",
+    "wt": 2
+   },
+   {
+    "id": 8,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "interpolationScale",
+    "wt": 5
+   },
+   {
+    "id": 9,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "interpolationRate",
+    "wt": 5
+   }
+  ],
+  "lunarclient.apollo.title.v1.ResetTitlesMessage": [],
+  "lunarclient.apollo.tntcountdown.v1.SetTntCountdownMessage": [
+   {
+    "id": 1,
+    "jstype": "lunarclient.apollo.common.v1.IEntityId|null",
+    "m": "message",
+    "name": "entityId",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "durationTicks",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.transfer.v1.PingData": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "serverIp",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.transfer.v1.PingData.Status|null",
+    "m": "int32",
+    "name": "status",
+    "wt": 0
+   },
+   {
+    "id": 3,
+    "jstype": "number|null",
+    "m": "int32",
+    "name": "ping",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.transfer.v1.PingRequest": [
+   {
+    "id": 1,
+    "jstype": "Uint8Array|null",
+    "m": "bytes",
+    "name": "requestId",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<string>|null",
+    "m": "string",
+    "name": "serverIps",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.transfer.v1.PingResponse": [
+   {
+    "id": 1,
+    "jstype": "Uint8Array|null",
+    "m": "bytes",
+    "name": "requestId",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "Array.<lunarclient.apollo.transfer.v1.IPingData>|null",
+    "m": "message",
+    "name": "pingData",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.transfer.v1.TransferRequest": [
+   {
+    "id": 1,
+    "jstype": "Uint8Array|null",
+    "m": "bytes",
+    "name": "requestId",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "serverIp",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.transfer.v1.TransferResponse": [
+   {
+    "id": 1,
+    "jstype": "Uint8Array|null",
+    "m": "bytes",
+    "name": "requestId",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.transfer.v1.TransferResponse.Status|null",
+    "m": "int32",
+    "name": "status",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.vignette.v1.DisplayVignetteMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "resourceLocation",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "number|null",
+    "m": "float",
+    "name": "opacity",
+    "wt": 5
+   }
+  ],
+  "lunarclient.apollo.vignette.v1.ResetVignetteMessage": [],
+  "lunarclient.apollo.waypoint.v1.DisplayWaypointMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "name",
+    "wt": 2
+   },
+   {
+    "id": 2,
+    "jstype": "lunarclient.apollo.common.v1.IBlockLocation|null",
+    "m": "message",
+    "name": "location",
+    "wt": 2
+   },
+   {
+    "id": 3,
+    "jstype": "lunarclient.apollo.common.v1.IColor|null",
+    "m": "message",
+    "name": "color",
+    "wt": 2
+   },
+   {
+    "id": 4,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "preventRemoval",
+    "wt": 0
+   },
+   {
+    "id": 5,
+    "jstype": "boolean|null",
+    "m": "bool",
+    "name": "hidden",
+    "wt": 0
+   }
+  ],
+  "lunarclient.apollo.waypoint.v1.RemoveWaypointMessage": [
+   {
+    "id": 1,
+    "jstype": "string|null",
+    "m": "string",
+    "name": "name",
+    "wt": 2
+   }
+  ],
+  "lunarclient.apollo.waypoint.v1.ResetWaypointsMessage": []
+ }
+}

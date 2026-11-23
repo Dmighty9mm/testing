@@ -1,12 +1,15 @@
 package net.lax1dude.eaglercraft.v2_6.placeholder_server;
 
 import java.nio.ByteBuffer;
+import java.util.ArrayDeque;
 import java.util.UUID;
 import java.util.concurrent.ScheduledFuture;
 
 import org.java_websocket.WebSocket;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.lax1dude.eaglercraft.v2_6.placeholder_server.mc.McBridge;
 
 /**
  * EaglerCraft 26.1.2 gateway - one browser connection's protocol state
@@ -21,6 +24,16 @@ import org.slf4j.LoggerFactory;
  * {@link GatewayWorld} around the player, then block updates for every
  * dig/place, inventory slots for drops, keep-alives every 15s, and the
  * vanilla move-packet handling.</p>
+ *
+ * <p>Backend side channel (PlaceholderServer {@code --backend}): at login
+ * the session also logs the player into the backend server through an
+ * {@link McBridge}. Plugin messages (custom payloads) are relayed both
+ * ways - client config 0x01 / play 0x10 to the backend, backend custom
+ * payloads to the client as play 0x14 (queued until the client is in
+ * PLAY) - so server APIs such as Apollo reach the browser client. Chat
+ * is mirrored to the backend, slash commands go to the backend only, and
+ * backend system chat is shown to the player. The world stays the
+ * gateway's own.</p>
  */
 public class GatewaySession {
 
@@ -88,6 +101,14 @@ public class GatewaySession {
         private static final int P_CHUNK = 0x2E;
         private static final int P_PLAYER_POSITION = 0x38;
         private static final int P_SYSTEM_CHAT = 0x4F;
+        /** Plugin message, S->C (docs/PROTOCOL.md play table). */
+        private static final int P_PLUGIN_MESSAGE_S2C = 0x14;
+        /** Plugin message, C->S (docs/PROTOCOL.md play table). */
+        private static final int P_PLUGIN_MESSAGE = 0x10;
+        /** Backend plugin messages held while the client is not in PLAY yet. */
+        private static final int MAX_QUEUED_TO_CLIENT = 256;
+        /** Gateway-side cap on one client plugin message (vanilla serverbound cap). */
+        private static final int MAX_CLIENT_PLUGIN_PAYLOAD = McBridge.MAX_SERVERBOUND_PAYLOAD;
 
         // ==== player action statuses ====
         private static final int ACTION_START = 0;
@@ -121,7 +142,12 @@ public class GatewaySession {
         private long lastKeepAliveSent;
         private long lastKeepAliveResponse;
         private ScheduledFuture<?> keepAliveTask;
-        private boolean closing;
+        private volatile boolean closing;
+
+        // backend side channel
+        private volatile McBridge bridge;
+        private final ArrayDeque<Object[]> toClient = new ArrayDeque<>();
+        private boolean clientPluginReady; // guarded by toClient
 
         public GatewaySession(PlaceholderServer server, WebSocket socket,
                         GatewayWorld world) {
@@ -271,6 +297,7 @@ public class GatewaySession {
                         send(out);
                         this.state = STATE_CONFIGURATION;
                         sendConfiguration();
+                        startBackendBridge();
                 } else if (packetId == L_PLUGIN_RESPONSE) {
                         // unanswered requests get an empty response - ignore
                 } else {
@@ -332,8 +359,7 @@ public class GatewaySession {
                                 in.readBoolean(); // server listings
                                 break;
                         case CC_PLUGIN_MESSAGE:
-                                in.readUtf();
-                                in.readRemaining();
+                                forwardPluginMessage(in.readUtf(), in.readRemaining());
                                 break;
                         case CC_KEEP_ALIVE:
                                 in.readLong();
@@ -402,6 +428,15 @@ public class GatewaySession {
                 this.keepAliveTask = server.scheduleKeepAlive(this);
                 LOG.info("player {} entered play (spawn {} {} {})",
                                 username, x, y, z);
+
+                // backend plugin messages that arrived during login/config
+                synchronized (toClient) {
+                        this.clientPluginReady = true;
+                        Object[] m;
+                        while ((m = toClient.poll()) != null) {
+                                sendPluginMessageToClient((String) m[0], (byte[]) m[1]);
+                        }
+                }
         }
 
         private void sendPlayerPosition() {
@@ -433,11 +468,25 @@ public class GatewaySession {
                                         kick("chat message too long");
                                         return;
                                 }
+                                McBridge b = this.bridge;
+                                if (b != null && message.startsWith("/")) {
+                                        // commands belong to the backend
+                                        if (!b.sendCommand(message.substring(1))) {
+                                                sendSystemChat("{\"text\":\"[gateway] backend not connected\",\"color\":\"red\"}");
+                                        }
+                                        break;
+                                }
+                                if (b != null) {
+                                        b.sendChat(message);
+                                }
                                 server.broadcastSystemChat("{\"text\":\"<"
                                                 + jsonEscape(username) + "> "
                                                 + jsonEscape(message) + "\"}");
                                 break;
                         }
+                        case P_PLUGIN_MESSAGE:
+                                forwardPluginMessage(in.readUtf(), in.readRemaining());
+                                break;
                         case P_KEEP_ALIVE:
                                 long token = in.readLong();
                                 this.lastKeepAliveResponse = System.currentTimeMillis();
@@ -767,6 +816,100 @@ public class GatewaySession {
 
         // ==================== plumbing ====================
 
+        // ==================== backend side channel ====================
+
+        /** Logs the player into the {@code --backend} server, if configured. */
+        private void startBackendBridge() {
+                if (server.getBackend() == null) {
+                        return;
+                }
+                McBridge.Listener listener = new McBridge.Listener() {
+                        @Override
+                        public void onStateChange(McBridge b, McBridge.State s, String detail) {
+                                LOG.info("backend bridge for {}: {} ({})", username, s, detail);
+                        }
+
+                        @Override
+                        public void onChat(McBridge b, String text) {
+                                if (isPlaying()) {
+                                        sendSystemChat("{\"text\":\"" + jsonEscape(text) + "\"}");
+                                }
+                        }
+
+                        @Override
+                        public void onKicked(McBridge b, String reason) {
+                                LOG.info("backend kicked {}: {}", username, reason);
+                                disconnect("{\"text\":\"" + jsonEscape("Kicked by the backend: " + reason) + "\"}");
+                        }
+
+                        @Override
+                        public void onError(McBridge b, String message) {
+                                LOG.info("backend bridge error for {}: {}", username, message);
+                                if (isPlaying()) {
+                                        sendSystemChat("{\"text\":\"" + jsonEscape("[gateway] backend: " + message)
+                                                        + "\",\"color\":\"red\"}");
+                                }
+                        }
+
+                        @Override
+                        public void onPluginMessage(McBridge b, String channel, byte[] data) {
+                                if (server.isVerbose()) {
+                                        LOG.info("backend -> {} plugin message {} ({} bytes)",
+                                                        username, channel, data.length);
+                                }
+                                synchronized (toClient) {
+                                        if (clientPluginReady) {
+                                                sendPluginMessageToClient(channel, data);
+                                        } else if (toClient.size() < MAX_QUEUED_TO_CLIENT) {
+                                                toClient.add(new Object[] { channel, data });
+                                        } else {
+                                                LOG.info("dropping backend plugin message {} for {}: queue full",
+                                                                channel, username);
+                                        }
+                                }
+                        }
+                };
+                McBridge b = new McBridge(server.getBackend(), server.getBackendIds(),
+                                server.getBackend().getHostString(), username, playerUuid,
+                                8000, listener);
+                this.bridge = b;
+                b.start();
+        }
+
+        /** Client plugin message -> backend (dropped when no backend is configured). */
+        private void forwardPluginMessage(String channel, byte[] data) {
+                if (data.length > MAX_CLIENT_PLUGIN_PAYLOAD) {
+                        kick("plugin message too large (" + data.length + " bytes on " + channel + ")");
+                        return;
+                }
+                if (server.isVerbose()) {
+                        LOG.info("{} -> backend plugin message {} ({} bytes)", username, channel, data.length);
+                }
+                McBridge b = this.bridge;
+                if (b != null && !b.sendPluginMessage(channel, data)) {
+                        LOG.info("backend refused plugin message {} from {}", channel, username);
+                }
+        }
+
+        private void sendPluginMessageToClient(String channel, byte[] data) {
+                GatewayBuffer out = GatewayBuffer.create();
+                out.writeVarInt(P_PLUGIN_MESSAGE_S2C);
+                out.writeUtf(channel);
+                out.writeBytes(data);
+                send(out);
+        }
+
+        /** Play-state disconnect with a JSON reason, then close. */
+        private void disconnect(String json) {
+                if (this.state == STATE_PLAY) {
+                        GatewayBuffer out = GatewayBuffer.create();
+                        out.writeVarInt(P_DISCONNECT);
+                        out.writeUtf(json);
+                        send(out);
+                }
+                close();
+        }
+
         private void send(GatewayBuffer buf) {
                 if (this.closing || !this.socket.isOpen()) {
                         return;
@@ -787,6 +930,10 @@ public class GatewaySession {
                         return;
                 }
                 this.closing = true;
+                McBridge b = this.bridge;
+                if (b != null) {
+                        b.close("client left");
+                }
                 if (this.keepAliveTask != null) {
                         this.keepAliveTask.cancel(false);
                 }

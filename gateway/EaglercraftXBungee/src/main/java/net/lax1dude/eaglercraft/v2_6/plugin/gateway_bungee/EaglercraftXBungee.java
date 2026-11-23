@@ -174,13 +174,15 @@ public class EaglercraftXBungee extends Plugin {
                 + "# TCP connect + login timeout for the MC bridge.\n"
                 + "forwarding_connect_timeout_ms: 8000\n"
                 + "#\n"
-                + "# MC-protocol packet ids used by the bridge (defaults match protocol\n"
-                + "# 775 of the 26.1.2 fork; override when the backend differs).\n"
-                + "mc_keepalive_id: 30\n"
-                + "mc_system_chat_id: 114\n"
-                + "mc_disconnect_id: 77\n"
-                + "mc_keepalive_response_id: 18\n"
-                + "mc_chat_id: 6\n";
+                + "# MC-protocol play packet ids used by the bridge (defaults are the\n"
+                + "# vanilla 26.1.2 / protocol 775 ids; override when the backend differs).\n"
+                + "mc_keepalive_id: 44\n"
+                + "mc_system_chat_id: 121\n"
+                + "mc_disconnect_id: 32\n"
+                + "mc_keepalive_response_id: 28\n"
+                + "mc_chat_id: 9\n"
+                + "mc_custom_payload_id: 24\n"
+                + "mc_custom_payload_response_id: 22\n";
         try {
             Files.write(file.toPath(), yaml.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -196,6 +198,8 @@ public class EaglercraftXBungee extends Plugin {
         ids.playDisconnect = intOf(cfg.get("mc_disconnect_id"), ids.playDisconnect);
         ids.playKeepAliveResponse = intOf(cfg.get("mc_keepalive_response_id"), ids.playKeepAliveResponse);
         ids.playChat = intOf(cfg.get("mc_chat_id"), ids.playChat);
+        ids.playCustomPayload = intOf(cfg.get("mc_custom_payload_id"), ids.playCustomPayload);
+        ids.playCustomPayloadC2S = intOf(cfg.get("mc_custom_payload_response_id"), ids.playCustomPayloadC2S);
         return ids;
     }
 
