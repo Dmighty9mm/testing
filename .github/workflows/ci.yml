@@ -107,7 +107,7 @@ jobs:
       - name: Download and patch TeaVM dependencies
         run: |
           echo "Resolving TeaVM dependencies (stderr visible on purpose)..."
-          cd /home/runner/work/eaglercraft-26.1.2/eaglercraft-26.1.2
+          cd "$GITHUB_WORKSPACE"
           ./gradlew :sources:dependencies --configuration teavmClasspath --no-daemon || \
             echo "WARNING: gradle resolve failed (exit $?); patched jars will be seeded into the cache from Maven Central instead"
 
