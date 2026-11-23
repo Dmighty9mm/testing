@@ -1001,3 +1001,39 @@ Next session:
 3. Regenerate the schema from a newer Apollo protos bundle if obtainable.
 4. Full Paper play refactor - needs the owner's explicit OK first.
 5. Ping source (keepalive RTT), armor/effects once those systems exist.
+
+---
+Task ID: 16 (addendum, 2026-11-23) - getting the Apollo work built and deployed
+
+- GitHub Actions on this account was locked ("account is locked due to a
+  billing issue"); every job failed in ~2 s with runner_id 0. The owner
+  added a payment method; the lock lifted on 2026-11-23 ~04:42 UTC.
+- PR #1 (Apollo/PlebMc work, head 96fcfb4) "Build PR Preview" run
+  44914933647: the preview TeaVM step can NOT compile this project
+  (:sources:compileTeavmJava, 88 errors, all in authlib/DFU/log4j/JsonOps
+  stubs that need the MC jar + patches that only ci.yml sets up; none in
+  client/apollo, client/mods, client/hud, PluginChannels). It ends with
+  `|| true` and ships the stale committed public/ bundle, which still has
+  the pre-1c165c4 y+2 UP-face mesher bug -> geometry.spec (30 verts, UP
+  face on y+2) and placement.spec (neighbor UP quad 0) fail. Reproduced
+  locally against committed public/: same 30 verts, UP missing.
+  => PR-preview e2e results are meaningless for this repo until
+  pr-preview.yml does the ci.yml build steps (open item).
+- Owner chose "Merge now"; PR #1 merged as 723c163. Build & Deploy run
+  45114898926 failed in <1 s: ci.yml "Download and patch TeaVM
+  dependencies" did `cd /home/runner/work/eaglercraft-26.1.2/...` (the
+  original repo name). Fix a2eea18 -> `cd "$GITHUB_WORKSPACE"`, PR #2,
+  merged by the owner's "merge it" as 298b243.
+- Build & Deploy run 45116728437 (298b243): build (TeaVM 83 s) ok,
+  JVM geometry-unit ok (incl. ApolloProtoTest/ApolloClientTest/
+  ClientModsTest), e2e shards 1/2/3 all ok (geometry + placement pass on
+  the real build), Deploy ok -> gh-pages 9531e74 "build 298b243...".
+  Deployed classes.js (2,634,164 bytes) contains "PlebMc", "lunar:apollo",
+  "apollo:json" (checked from the gh-pages branch; the *.github.io host is
+  blocked from the sandbox, so the live URL itself was not fetched).
+- Site URL (project Pages from gh-pages): https://dmighty9mm.github.io/testing/
+  (requires Settings -> Pages -> source = gh-pages / root).
+
+Open: make pr-preview.yml run the real ci.yml build steps; refresh the
+committed public/ bundle; offline single-HTML (release.yml on v* tags)
+untested for this port; real Paper+Apollo test still pending.
